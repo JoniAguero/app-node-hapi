@@ -12,9 +12,17 @@ async function init () {
     // Configuramos las rutas de accedo a nuestro API
     server.route({
         method: 'GET',
-        path: '/hola',
-        handler: (request, h) => {
-            return 'Hola Mundo';
+        path: '/',
+        handler: (req, h) => {
+            return h.response('Hola mundo ...').code(200)
+        }
+    })
+
+    server.route({
+        method: 'GET',
+        path: '/redirect',
+        handler: (req, h) => {
+            return h.redirect('http://platzi.com')
         }
     })
 
