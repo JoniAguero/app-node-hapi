@@ -16,7 +16,8 @@
   "author": "JoniAguero",
   "license": "MIT",
   "dependencies": {
-    "hapi": "^17.7.0"
+    "hapi": "^17.7.0",
+    "inert": "^5.1.2"
   },
   "devDependencies": {
     "nodemon": "^1.18.6"

@@ -1,42 +1,49 @@
-"use strict"
+'use strict'
 
-const Hapi = require('hapi');
+const Hapi = require('hapi')
+const inert = require('inert')
+const path = require('path')
 
-// Configuramos el servidor
 const server = Hapi.server({
     port: process.env.PORT || 3000,
-    host: 'localhost'
-});
-
-async function init () {
-    // Configuramos las rutas de accedo a nuestro API
-    server.route({
-        method: 'GET',
-        path: '/',
-        handler: (req, h) => {
-            return h.response('Hola mundo ...').code(200)
+    host: 'localhost',
+    routes: {
+        files: {
+            relativeTo: path.join(__dirname, 'public')
         }
-    })
+    }
+})
 
-    server.route({
-        method: 'GET',
-        path: '/redirect',
-        handler: (req, h) => {
-            return h.redirect('http://platzi.com')
-        }
-    })
-
+async function init() {
     try {
+        await server.register(inert)
+
+        server.route({
+            method: 'GET',
+            path: '/home',
+            handler: (req, h) => {
+                return h.file('index.html')
+            }
+        })
+
+        server.route({
+            method: 'GET',
+            path: '/{param*}',
+            handler: {
+                directory: {
+                    path: '.',
+                    index: ['index.html']
+                }
+            }
+        })
+
         await server.start()
     } catch (error) {
-        console.error(error);
-        process.exit(1);
+        console.error(error)
+        process.exit(1)
     }
-    console.log(`Servidor corriendo en ${server.info.uri}`);
-    
+
+    console.log(`Servidor lanzado en: ${server.info.uri}`)
 }
 
-init();
-
-
-
+init()
