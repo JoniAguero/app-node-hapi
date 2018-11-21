@@ -1,9 +1,10 @@
 'use strict'
 
 const Hapi = require('hapi')
+const handlerbars = require('handlebars')
 const inert = require('inert')
 const path = require('path')
-const hbs = require('handlebars')
+const routes = require('./routes')
 const vision = require('vision')
 
 const server = Hapi.server({
@@ -22,43 +23,16 @@ async function init() {
         await server.register(vision)
 
         server.views({
-            engines: { // --- hapi puede usar diferentes engines
-                hbs: hbs // --- asociamos el plugin al tipo de archivos
+            engines: {
+                hbs: handlerbars
             },
-            relativeTo: __dirname, // --- para que las vistas las busque fuera de /public
-            path: 'views', // --- directorio donde colocaremos las vistas dentro de nuestro proyecto
-            layout: true, // --- indica que usaremos layouts 
-            layoutPath: 'views' // --- ubicación de los layouts
+            relativeTo: __dirname,
+            path: 'views',
+            layout: true,
+            layoutPath: 'views'
         })
 
-        server.route({
-            method: 'GET',
-            path: '/',
-            handler: (req, h) => {
-                return h.view('index', {
-                    title: 'Home'
-                })
-            }
-        })
-
-        server.route({
-            method: 'GET',
-            path: '/register',
-            handler: (req, h) => {
-                return h.view('register', {
-                    title: 'Registro'
-                })
-            }
-        })
-
-        server.route({
-            method: 'POST',
-            path: '/create-user',
-            handler: (req, h) => {
-                console.log(req.payload);
-                return 'Usuario Creado'
-            }
-        })
+        server.route(routes)
 
         await server.start()
     } catch (error) {
