@@ -16,6 +16,8 @@
   "author": "JoniAguero",
   "license": "MIT",
   "dependencies": {
+    "bcrypt": "^3.0.2",
+    "firebase-admin": "^6.2.0",
     "handlebars": "^4.0.12",
     "hapi": "^17.7.0",
     "inert": "^5.1.2",
