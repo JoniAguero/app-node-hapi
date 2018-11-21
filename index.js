@@ -3,6 +3,8 @@
 const Hapi = require('hapi')
 const inert = require('inert')
 const path = require('path')
+const hbs = require('handlebars')
+const vision = require('vision')
 
 const server = Hapi.server({
     port: process.env.PORT || 3000,
@@ -17,12 +19,25 @@ const server = Hapi.server({
 async function init() {
     try {
         await server.register(inert)
+        await server.register(vision)
+
+        server.views({
+            engines: { // --- hapi puede usar diferentes engines
+                hbs: hbs // --- asociamos el plugin al tipo de archivos
+            },
+            relativeTo: __dirname, // --- para que las vistas las busque fuera de /public
+            path: 'views', // --- directorio donde colocaremos las vistas dentro de nuestro proyecto
+            layout: true, // --- indica que usaremos layouts 
+            layoutPath: 'views' // --- ubicación de los layouts
+        })
 
         server.route({
             method: 'GET',
-            path: '/home',
+            path: '/',
             handler: (req, h) => {
-                return h.file('index.html')
+                return h.view('index', {
+                    title: 'Home'
+                })
             }
         })
 
@@ -43,7 +58,7 @@ async function init() {
         process.exit(1)
     }
 
-    console.log(`Servidor lanzado en: ${server.info.uri}`)
+    console.log(`Servidor corriendo en: ${server.info.uri}`)
 }
 
 init()
